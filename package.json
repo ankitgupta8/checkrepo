@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "*",
-    "@react-native-async-storage/async-storage": "*",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/material-top-tabs": "*",
     "@react-navigation/native": "*",
     "@react-navigation/stack": "*",
@@ -23,7 +23,7 @@
     "react": "18.3.1",
     "react-native": "0.76.9",
     "react-native-dropdown-picker": "*",
-    "react-native-gesture-handler": "*",
+    "react-native-gesture-handler": "~2.20.2",
     "react-native-paper": "*",
     "react-native-vector-icons": "*"
   },
@@ -31,6 +31,7 @@
     "@babel/core": "^7.20.0",
     "@expo/metro-config": "*",
     "@types/react": "~18.3.12",
+    "@types/react-native": "^0.72.8",
     "expo": "~52.0.43",
     "typescript": "^5.3.3"
   },
