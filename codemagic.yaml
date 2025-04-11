@@ -7,9 +7,6 @@ workflows:
       vars:
         PACKAGE_NAME: "com.guptaankit9.ankitproject"
     scripts:
-      - name: Set Android SDK location
-        script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
       - name: Install npm dependencies
         script: |
           npm install expo-cli@6.3.0
