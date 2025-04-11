@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text as RNText, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import theme from '../theme';
 
 const { width } = Dimensions.get('window');
@@ -69,6 +70,20 @@ const TabBar = ({ state, descriptors, navigation }) => {
             });
           };
 
+          const animatedIconStyle = useAnimatedStyle(() => {
+            return {
+              transform: [
+                { 
+                  scale: withSpring(isFocused ? 1.2 : 1, { 
+                    duration: 200 
+                  }) 
+                }
+              ],
+              opacity: withSpring(isFocused ? 1 : 0.7, { 
+                duration: 200 
+              })
+            };
+          });
 
           return (
             <TouchableOpacity
@@ -82,13 +97,13 @@ const TabBar = ({ state, descriptors, navigation }) => {
               style={styles.tab}
               activeOpacity={0.7}
             >
-              <View style={[styles.iconContainer, { opacity: isFocused ? 1 : 0.7 }]}>
+              <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
                 <Ionicons
                   name={isFocused ? tabInfo.activeIcon : tabInfo.icon}
                   size={24}
                   color={isFocused ? theme.colors.primary : theme.colors.textSecondary}
                 />
-              </View>
+              </Animated.View>
               
               <Text
                 style={[

@@ -19,6 +19,7 @@ import React from 'react';
 import { View, Text as RNText, StyleSheet, Dimensions, TouchableOpacity, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import theme from '../theme';
 import { Badge } from './UIComponents';
 
@@ -62,6 +63,21 @@ const StudentCard = ({
   salary,
   onPress
 }) => {
+  const scale = useSharedValue(1);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const onPressIn = () => {
+    scale.value = withSpring(0.97);
+  };
+
+  const onPressOut = () => {
+    scale.value = withSpring(1);
+  };
 
   const handlePress = () => {
     if (onPress) {
@@ -96,10 +112,12 @@ const StudentCard = ({
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <Animated.View style={[styles.cardContainer, animatedStyles]}>
       <TouchableOpacity 
         activeOpacity={0.9}
         onPress={handlePress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
       >
         <LinearGradient
           colors={getSubjectColor()}
@@ -154,7 +172,7 @@ const StudentCard = ({
           </View>
         </LinearGradient>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 

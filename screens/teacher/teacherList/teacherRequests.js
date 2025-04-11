@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text as RNText, StyleSheet, Dimensions, RefreshControl, SafeAreaView, TouchableOpacity } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  useAnimatedScrollHandler,
+  withTiming,
+  withSpring,
+  interpolate,
+  Extrapolate
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator, Portal, Modal, Provider as PaperProvider } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -38,11 +47,7 @@ const TeacherListScreen = ({ navigation }) => {
   const [sortNewest, setSortNewest] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [availableLocations, setAvailableLocations] = useState([]);
-  const scrollY = useRef(0);
-
-  const handleCardPress = (teacher) => {
-    navigation.navigate('TeacherDetails', { teacher });
-  };
+  const scrollY = useSharedValue(0);
 
   async function getMyFiles() {
     const result = await fetchWholeTodoListTeacher();
@@ -106,12 +111,25 @@ const TeacherListScreen = ({ navigation }) => {
     setDistrict('');
   };
 
-  const headerStyle = {
-    transform: [{
-      translateY: scrollY.current > 100 ? -50 : 0,
-    }],
-    opacity: scrollY.current > 100 ? 0 : 1,
-  };
+  // Create animated styles
+  const headerTranslateY = useAnimatedStyle(() => {
+    return {
+      transform: [{ 
+        translateY: interpolate(
+          scrollY.value,
+          [0, 100],
+          [0, -50],
+          Extrapolate.CLAMP
+        ) 
+      }],
+      opacity: interpolate(
+        scrollY.value,
+        [0, 100],
+        [1, 0],
+        Extrapolate.CLAMP
+      )
+    };
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -121,11 +139,11 @@ const TeacherListScreen = ({ navigation }) => {
         end={{ x: 1, y: 1 }}
         style={styles.container}
       >
-        {/* Header */}
-        <View
+        {/* Animated Header */}
+        <Animated.View 
           style={[
             styles.headerContainer,
-            headerStyle
+            headerTranslateY
           ]}
         >
           <Heading 
@@ -154,7 +172,7 @@ const TeacherListScreen = ({ navigation }) => {
               style={styles.sortButton}
             />
           </View>
-        </View>
+        </Animated.View>
 
         {/* Location Selection Modal */}
         <Portal>
@@ -217,19 +235,19 @@ const TeacherListScreen = ({ navigation }) => {
         </Portal>
 
         {/* Main Content */}
-        <ScrollView
+        <Animated.ScrollView
           contentContainerStyle={styles.scrollViewContent}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
+            <RefreshControl 
+              refreshing={refreshing} 
               onRefresh={onRefresh}
               colors={[theme.colors.primary]}
               tintColor="#ffffff"
             />
           }
-          onScroll={(event) => {
-            scrollY.current = event.nativeEvent.contentOffset.y;
-          }}
+          onScroll={useAnimatedScrollHandler((event) => {
+            scrollY.value = event.contentOffset.y;
+          })}
           scrollEventThrottle={16}
         >
           {/* Filter Indicators */}
@@ -277,7 +295,6 @@ const TeacherListScreen = ({ navigation }) => {
                 district={e.district}
                 specificLocation={e.specificLocation}
                 navigation={navigation}
-                onPress={() => handleCardPress(e)}
               />
             ))
           ) : (
@@ -306,23 +323,23 @@ const TeacherListScreen = ({ navigation }) => {
           
           {/* Bottom Padding */}
           <View style={styles.bottomPadding} />
-        </ScrollView>
+        </Animated.ScrollView>
       </LinearGradient>
     </SafeAreaView>
   );
 };
 
-const TeacherRequest = () => {
+export default function TeacherRequest() {
   return (
     <PaperProvider>
       <Stack.Navigator>
-        <Stack.Screen
-          name="TeacherList"
+        <Stack.Screen 
+          name="TeacherList" 
           component={TeacherListScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="TeacherDetails"
+        <Stack.Screen 
+          name="TeacherDetails" 
           component={TeacherDetailsScreen}
           options={{
             headerShown: false
@@ -331,9 +348,7 @@ const TeacherRequest = () => {
       </Stack.Navigator>
     </PaperProvider>
   );
-};
-
-export default TeacherRequest;
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -473,3 +488,4 @@ const styles = StyleSheet.create({
     height: 100,
   },
 });
+

@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text as RNText, StyleSheet, Dimensions, RefreshControl, SafeAreaView, TouchableOpacity } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  useAnimatedScrollHandler,
+  withTiming,
+  withSpring,
+  interpolate,
+  Extrapolate
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator, Portal, Modal, Provider as PaperProvider } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -35,7 +44,7 @@ export default function StudentsRequest({ navigation }) {
   const [sortNewest, setSortNewest] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [availableLocations, setAvailableLocations] = useState([]);
-  const scrollY = useRef(0);
+  const scrollY = useSharedValue(0);
 
   async function getMyFiles() {
     const result = await fetchWholeTodoListStudent();
@@ -99,13 +108,25 @@ export default function StudentsRequest({ navigation }) {
     setDistrict('');
   };
 
-  // Create styles
-  const headerStyle = {
-    transform: [{
-      translateY: scrollY.current > 100 ? -50 : 0,
-    }],
-    opacity: scrollY.current > 100 ? 0 : 1,
-  };
+  // Create animated styles
+  const headerTranslateY = useAnimatedStyle(() => {
+    return {
+      transform: [{ 
+        translateY: interpolate(
+          scrollY.value,
+          [0, 100],
+          [0, -50],
+          Extrapolate.CLAMP
+        ) 
+      }],
+      opacity: interpolate(
+        scrollY.value,
+        [0, 100],
+        [1, 0],
+        Extrapolate.CLAMP
+      )
+    };
+  });
 
   return (
     <PaperProvider>
@@ -116,11 +137,11 @@ export default function StudentsRequest({ navigation }) {
           end={{ x: 1, y: 1 }}
           style={styles.container}
         >
-          {/* Header */}
-          <View
+          {/* Animated Header */}
+          <Animated.View 
             style={[
               styles.headerContainer,
-              headerStyle
+              headerTranslateY
             ]}
           >
             <Heading 
@@ -149,7 +170,7 @@ export default function StudentsRequest({ navigation }) {
                 style={styles.sortButton}
               />
             </View>
-          </View>
+          </Animated.View>
 
           {/* Location Selection Modal */}
           <Portal>
@@ -212,19 +233,19 @@ export default function StudentsRequest({ navigation }) {
           </Portal>
 
           {/* Main Content */}
-          <ScrollView
+          <Animated.ScrollView
             contentContainerStyle={styles.scrollViewContent}
             refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
+              <RefreshControl 
+                refreshing={refreshing} 
                 onRefresh={onRefresh}
                 colors={[theme.colors.primary]}
                 tintColor="#ffffff"
               />
             }
-            onScroll={(event) => {
-              scrollY.current = event.nativeEvent.contentOffset.y;
-            }}
+            onScroll={useAnimatedScrollHandler((event) => {
+              scrollY.value = event.contentOffset.y;
+            })}
             scrollEventThrottle={20}
           >
             {/* Filter Indicators */}
@@ -303,7 +324,7 @@ export default function StudentsRequest({ navigation }) {
             
             {/* Bottom Padding */}
             <View style={styles.bottomPadding} />
-          </ScrollView>
+          </Animated.ScrollView>
         </LinearGradient>
       </SafeAreaView>
     </PaperProvider>

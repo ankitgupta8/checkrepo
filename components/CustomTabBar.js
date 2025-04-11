@@ -1,7 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRef } from 'react';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming, 
+  interpolateColor,
+  useDerivedValue
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import theme from '../theme';
 
@@ -11,12 +17,21 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   // Animation values
   const tabCount = state.routes.length;
   const tabWidth = width / tabCount;
-  const indicatorPosition = useRef(state.index * tabWidth);
-
+  const indicatorPosition = useSharedValue(state.index * tabWidth);
+  
+  // Update indicator position when tab changes
   React.useEffect(() => {
-    indicatorPosition.current = state.index * tabWidth;
+    indicatorPosition.value = withTiming(state.index * tabWidth, { 
+      duration: 300 
+    });
   }, [state.index]);
 
+  // Animated styles for the indicator
+  const indicatorStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: indicatorPosition.value }],
+    };
+  });
 
   return (
     <View style={styles.container}>
@@ -24,15 +39,15 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
         colors={['#ffffff', '#f8f9fa']}
         style={styles.tabBar}
       >
-        {/* Indicator */}
-        <View style={[styles.indicator, { transform: [{ translateX: indicatorPosition.current }] }]}>
+        {/* Animated indicator */}
+        <Animated.View style={[styles.indicator, indicatorStyle]}>
           <LinearGradient
             colors={theme.colors.gradient.primary}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.indicatorGradient}
           />
-        </View>
+        </Animated.View>
         
         {/* Tab buttons */}
         {state.routes.map((route, index) => {
@@ -82,17 +97,57 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-// Individual tab item component
+// Individual tab item component with animations
 const TabItem = ({ icon, label, isFocused }) => {
-  const iconColor = isFocused ? theme.colors.primary : theme.colors.textSecondary;
-  const textColor = isFocused ? theme.colors.primary : theme.colors.textSecondary;
+  // Animation for icon and text scaling
+  const scale = useSharedValue(isFocused ? 1 : 0.85);
+  
+  // Update scale when focus changes
+  React.useEffect(() => {
+    scale.value = withTiming(isFocused ? 1 : 0.85, { duration: 200 });
+  }, [isFocused]);
+  
+  // Derived value for color interpolation
+  const progress = useDerivedValue(() => {
+    return isFocused ? 1 : 0;
+  }, [isFocused]);
+  
+  // Animated styles
+  const animatedIconStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      progress.value,
+      [0, 1],
+      [theme.colors.textSecondary, theme.colors.primary]
+    );
+    
+    return {
+      color,
+      transform: [{ scale: scale.value }],
+    };
+  });
+  
+  const animatedTextStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      progress.value,
+      [0, 1],
+      [theme.colors.textSecondary, theme.colors.primary]
+    );
+    
+    return {
+      color,
+      transform: [{ scale: scale.value }],
+      opacity: isFocused ? 1 : 0.7,
+    };
+  });
 
   return (
     <View style={styles.tabItem}>
-      <Ionicons name={icon} size={24} color={iconColor} />
-      <Text style={[styles.tabLabel, { color: textColor, opacity: isFocused ? 1 : 0.7 }]}>
+      <Animated.View style={animatedIconStyle}>
+        <Ionicons name={icon} size={24} color={theme.colors.primary} />
+      </Animated.View>
+      <Animated.Text style={[styles.tabLabel, animatedTextStyle]}>
         {label}
-      </Text>
+      </Animated.Text>
     </View>
   );
 };

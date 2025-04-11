@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 /**
  * App.js - Main Application Component
  * 
@@ -12,6 +13,7 @@
  * The app uses React Navigation with Stack and Tab navigators to manage
  * different user flows for students and teachers.
  */
+import 'react-native-reanimated';
 
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, Alert, StatusBar } from 'react-native';
@@ -20,6 +22,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Searchbar, Button } from 'react-native-paper';
 import { getAuth, signOut } from "firebase/auth";
+import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -98,11 +101,24 @@ function TeacherScreen({ navigation }) {
   );
 }
 
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+
 function TabBar({ state, descriptors, navigation }) {
+  const translateX = useSharedValue(0);
+
+  React.useEffect(() => {
+    translateX.value = withTiming(state.index * (width / state.routes.length), { duration: 300 });
+  }, [state.index]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+    };
+  });
 
   return (
     <View style={styles.tabBar}>
-      <View style={[styles.slider, { left: state.index * (width / state.routes.length) }]} />
+      <Animated.View style={[styles.slider, animatedStyle]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label = options.tabBarLabel || options.title || route.name;
@@ -130,11 +146,14 @@ function TabBar({ state, descriptors, navigation }) {
             onPress={onPress}
             style={styles.tabItem}
           >
-            <Icon
+            <AnimatedIcon
               name={options.tabBarIcon({ focused: isFocused, color: '', size: 24 }).props.name}
               size={24}
               color={isFocused ? '#4c669f' : '#b3b3b3'}
-              style={styles.icon}
+              style={[
+                styles.icon,
+                { transform: [{ scale: isFocused ? 1.2 : 1 }] },
+              ]}
             />
             <Text style={[styles.label, { color: isFocused ? '#4c669f' : '#b3b3b3' }]}>{label}</Text>
           </TouchableOpacity>

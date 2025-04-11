@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { createTodoTaskTeacher } from '../../../firestore/create';
 import { auth } from '../../../firebase';
@@ -65,6 +66,13 @@ export default function TeacherRegisterScreen({ navigation }) {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const buttonScale = useSharedValue(1);
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: buttonScale.value }],
+    };
+  });
 
   const handleProvinceChange = (selectedProvince) => {
     setProvince(selectedProvince);
@@ -140,6 +148,13 @@ export default function TeacherRegisterScreen({ navigation }) {
     }
   };
 
+  const onPressIn = () => {
+    buttonScale.value = withSpring(0.95);
+  };
+
+  const onPressOut = () => {
+    buttonScale.value = withSpring(1);
+  };
 
   const renderPhotoUpload = () => (
     <TouchableOpacity style={styles.photoUploadContainer} onPress={handleImagePick}>
@@ -274,7 +289,7 @@ export default function TeacherRegisterScreen({ navigation }) {
         />
       </View>
       
-      <View style={styles.submitButtonContainer}>
+      <Animated.View style={[styles.submitButtonContainer, animatedButtonStyle]}>
         <Button
           title={uploading ? "Creating..." : "Create Profile"}
           onPress={handleSubmit}
@@ -283,7 +298,7 @@ export default function TeacherRegisterScreen({ navigation }) {
           loading={uploading}
           style={styles.submitButton}
         />
-      </View>
+      </Animated.View>
     </Card>
   );
 

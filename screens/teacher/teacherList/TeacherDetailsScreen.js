@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import theme from '../../../theme';
 import { Button, Badge, Card, Heading } from '../../../components/UIComponents';
+import Animated from 'react-native-reanimated';
 
 const TeacherDetailsScreen = ({ route, navigation }) => {
   const { teacher } = route.params;
@@ -26,7 +27,7 @@ const TeacherDetailsScreen = ({ route, navigation }) => {
         <Ionicons name="arrow-back" size={24} color="#ffffff" />
       </TouchableOpacity>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View style={styles.profileIconContainer}>
             {teacher.photoURL ? (
@@ -105,7 +106,7 @@ const TeacherDetailsScreen = ({ route, navigation }) => {
             </View>
           </View>
         </Card>
-      </ScrollView>
+      </Animated.ScrollView>
     </LinearGradient>
   );
 };
