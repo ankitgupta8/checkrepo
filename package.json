@@ -25,7 +25,7 @@
     "react-native-dropdown-picker": "*",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-paper": "*",
-    "react-native-reanimated": "^3.17.3",
+    "react-native-reanimated": "~3.16.1",
     "react-native-vector-icons": "*"
   },
   "devDependencies": {

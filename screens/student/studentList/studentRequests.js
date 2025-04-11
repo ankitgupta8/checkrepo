@@ -127,6 +127,13 @@ export default function StudentsRequest({ navigation }) {
       )
     };
   });
+  // const handleCardPress = (student) => {
+  //   // Navigate to the student detail screen, passing the student data
+  //   navigation.navigate('StudentDetails', { studentData: student });
+  //   // You might need to adjust 'StudentDetail' to the actual name
+  //   // of your student details screen route in your navigation setup.
+  // };
+
 
   return (
     <PaperProvider>
@@ -294,8 +301,8 @@ export default function StudentsRequest({ navigation }) {
                   specificLocation={e.specificLocation}
                   salary={e.salary}
                   teachingHours={e.teachingHours}
-                  photoURL={e.photoURL}
-                  onPress={() => handleCardPress(e)}
+                navigation={navigation}
+                photoURL={e.photoURL}
                 />
               ))
             ) : (
