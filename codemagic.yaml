@@ -25,7 +25,7 @@ workflows:
           fi
       - name: Validate Expo project setup
         script: |
-          npx expo doctor || true
+          npx expo-doctor || true
       - name: Run Expo Prebuild
         script: |
           npx expo prebuild
