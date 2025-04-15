@@ -9,56 +9,32 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@cloudinary/url-gen": "*",
-    "@expo/config": "*",
-    "@expo/metro-config": "*",
-    "@expo/metro-runtime": "*",
     "@expo/vector-icons": "*",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-firebase/app": "*",
-    "@react-native-firebase/firestore": "*",
-    "@react-native-picker/picker": "*",
-    "@react-navigation/bottom-tabs": "*",
     "@react-navigation/material-top-tabs": "*",
     "@react-navigation/native": "*",
-    "@react-navigation/native-stack": "*",
     "@react-navigation/stack": "*",
-    "@types/react": "~18.3.12",
-    "cloudinary": "*",
-    "cloudinary-react-native": "*",
     "expo": "~52.0.43",
     "expo-image-picker": "*",
     "expo-linear-gradient": "*",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "^4.0.9",
     "firebase": "*",
-    "lottie-react-native": "*",
     "react": "18.3.1",
     "react-native": "0.76.9",
     "react-native-dropdown-picker": "*",
     "react-native-gesture-handler": "~2.20.2",
-    "react-native-keyboard-aware-scroll-view": "*",
-    "react-native-pager-view": "*",
     "react-native-paper": "*",
-    "react-native-picker-select": "*",
     "react-native-reanimated": "~3.16.1",
-    "react-native-safe-area-context": "*",
-    "react-native-screens": "*",
-    "react-native-tab-view": "*",
     "react-native-vector-icons": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@expo/metro-config": "*",
-    "@react-native-community/cli": "*",
     "@types/react": "~18.3.12",
     "@types/react-native": "^0.72.8",
+    "expo": "~52.0.43",
     "typescript": "^5.3.3"
   },
-  "private": true,
-  "resolutions": {
-    "@expo/config-plugins": "~6.0.0",
-    "@expo/prebuild-config": "~6.0.0",
-    "expo-modules-autolinking": "~1.1.0"
-  }
+  "private": true
 }
