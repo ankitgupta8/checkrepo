@@ -1,3 +1,5 @@
+import { enableScreens } from 'react-native-screens';
+
 import 'react-native-gesture-handler';
 /**
  * App.js - Main Application Component
@@ -245,6 +247,8 @@ const handleSignOut = async (navigation) => {
 };
 
 function App() {
+  enableScreens();
+
   return (
     <NavigationContainer
       theme={{
