@@ -27,7 +27,8 @@
     "react-native-paper": "*",
     "react-native-reanimated": "~3.16.1",
      "react-native-screens": "*",
-    "react-native-vector-icons": "*"
+    "react-native-vector-icons": "*",
+    "@cloudinary/url-gen": "*",
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
