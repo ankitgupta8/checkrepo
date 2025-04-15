@@ -9,7 +9,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@cloudinary/url-gen": "*",
     "@expo/vector-icons": "*",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/material-top-tabs": "*",
@@ -27,9 +26,7 @@
     "react-native-gesture-handler": "~2.20.2",
     "react-native-paper": "*",
     "react-native-reanimated": "~3.16.1",
-     "react-native-screens": "*",
-    "react-native-vector-icons": "*",
-    
+    "react-native-vector-icons": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
